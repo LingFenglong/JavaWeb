@@ -5,14 +5,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.PrintWriter;
+
+import com.database.Data;
+import com.entity.User;
 
 /**
  * Servlet implementation class LoginServlet
  */
-@WebServlet("/login.do")
+@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -32,11 +34,11 @@ public class LoginServlet extends HttpServlet {
 		response.setContentType("text/html;charset=utf-8");
 		
 		writer.write("<html><body>");
-		writer.write("<h1>登陆</h1>");
+		writer.write("<h1>登录</h1>");
 		writer.write("<form action='login' method='post'>");
 		writer.write("<input type='text' name='username'> <input type='submit'>");
-		if (request.getAttribute("error") != null && request.getAttribute("error").equals("usernameIsNull")) {
-			writer.write("<font color='red'>用户名为空</font>");
+		if (request.getAttribute("error") != null && request.getAttribute("error").equals("UserExist")) {
+			writer.write("<font color='red'>该用户已存在</font>");
 		}
 		writer.write("</form>");
 		writer.write("</body></html>");
@@ -48,14 +50,16 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String username = request.getParameter("username").trim();
-		if (username.equals("")) {
-			request.setAttribute("error", "usernameIsNull");
-			doGet(request, response);
-		} else {
+		String username = request.getParameter("username");
+		System.out.println("username = " + username);
+		User user = new User("" + username);
+		if (user.isAvailable()) {
+			Data.addOne(user);
 			request.getSession().setAttribute("username", username);
-			response.sendRedirect("computer.html");
+			response.sendRedirect("chatGroup.html");
+		} else {
+			request.setAttribute("error", "UserExist");
+			doGet(request, response);
 		}
 	}
-
 }
