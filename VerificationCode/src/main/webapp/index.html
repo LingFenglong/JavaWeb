@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form action="login" method="post">
+        验证码：<input type="text" name="verification_code"/>
+        <img id="verificationCodeImg" src="verificationcode"/>
+        <a href="javascript:refresh()">看不清，换一个</a>
+        <br/>
+        <input type="submit" name="提交"/>
+    </form>
+</body>
+
+<script type="text/javascript">
+    function refresh() {
+        var img = document.getElementById("verificationCodeImg");
+        img.src = "http:////" + location.host + "/VerificationCode/verificationcode?" + Math.random();
+    }
+
+</script>
+
+</html>
