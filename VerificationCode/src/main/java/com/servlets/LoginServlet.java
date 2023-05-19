@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,28 +35,34 @@ public class LoginServlet extends HttpServlet {
 		
 		writer.write("<html><body>");
 		writer.write("<form action='login' method='post'>");
-		writer.write("用户名：<input type='text' name='username'/>");
-		writer.write("<br/>");
-		writer.write("密码：<input type='password' name='password'/>");
-		writer.write("<br/>");
-		writer.write("验证码：<input type='text' name='verification_code'/>");
-		writer.write("<img id='verificationCodeImg' src='verificationcode' />");
-		writer.write("<a href='verificationcode' target='_blank'>换一张</a>");		
+		writer.write("");
+		writer.write("");
+		writer.write("<a href='verificationcode'>换一张</a>");
 		writer.write("<br/>");
 		writer.write("<input type='submit' name='登录'/>");
 		writer.write("</form>");
 		writer.write("</body></html>");
+		
+		writer.flush();
+		writer.close();
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		String verificationCode = request.getParameter("verification_code");
+		HttpSession session = request.getSession();
+		String code = request.getParameter("verification_code");
+		String verificationCode = (String) session.getAttribute("verificationCode");
+		System.out.println("code = " + code + "\r\n"
+				+ "verificationCode = " + verificationCode);
 		
-		System.out.println(username + "\t" + password + "\t" + verificationCode);
+		if (code.equalsIgnoreCase(verificationCode)) {
+			session.setAttribute("state", "验证成功");
+		} else {
+			session.setAttribute("state", "验证失败");
+		}
+		response.sendRedirect("showstatus");
 	}
 
 }
