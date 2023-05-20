@@ -29,7 +29,7 @@ public class ShowStatusServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		response.setHeader("refresh", "0.5; login");
+		response.setHeader("refresh", "0.5; index.html");
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=utf-8");
 		PrintWriter writer = response.getWriter();
